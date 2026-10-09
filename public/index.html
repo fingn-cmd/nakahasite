@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nakahasite - SaaS Service & Operations Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- HTML5 QR Code & Barcode Scanner CDN -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            surface: {
+              950: '#06090e',
+              900: '#0a0e17',
+              850: '#0f172a',
+              800: '#1e293b',
+              750: '#27354a',
+              700: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #06090e;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+    }
+    input, select, textarea {
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #10b981 !important;
+      outline: none !important;
+      box-shadow: 0 0 0 1px #10b981 !important;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0e17;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+
+  <!-- ============================================== -->
+  <!-- 1. AUTH / LOGIN OVERLAY (SHOWN IF LOGGED OUT) -->
+  <!-- ============================================== -->
+  <div id="loginOverlay" class="fixed inset-0 z-50 bg-surface-950 flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-500/20 text-2xl font-black">
+          <i class="fa-solid fa-wrench"></i>
+        </div>
+        <h1 class="text-2xl font-black text-white tracking-tight">Nakahasite<span class="text-emerald-400">.</span></h1>
+        <p class="text-xs text-slate-400">Sistem Operasional Servis & Kasir Digital Multi-Staf</p>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Username / Email</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input type="text" id="loginUsername" required class="w-full pl-9 pr-3 py-2.5 rounded-xl text-xs" placeholder="Username atau email staf">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input type="password" id="loginPassword" required class="w-full pl-9 pr-3 py-2.5 rounded-xl text-xs" placeholder="••••••••">
+          </div>
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black text-sm tracking-wide transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2">
+          <span>Masuk ke Dashboard</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </form>
+
+      <div class="text-center text-[11px] text-slate-500 pt-2 border-t border-surface-800">
+        Nakahasite SaaS v1.0 • HP, Laptop, Bengkel & Percetakan
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 2. MAIN APPLICATION SHELL (SHOWN WHEN LOGGED IN) -->
+  <!-- ============================================== -->
+  <div id="appShell" class="min-h-screen flex flex-col hidden">
+
+    <!-- TOP BAR -->
+    <header class="border-b border-surface-750 bg-surface-900/90 sticky top-0 z-30 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div id="headerLogoWrapper" class="flex items-center justify-center">
+            <img id="headerLogoImg" src="/uploads/nakahasite-logo.svg" alt="Logo Usaha" class="h-9 max-w-[130px] object-contain rounded-lg">
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-white text-base tracking-tight leading-none" id="headerBrandTitle">Nakahasite</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-surface-800 text-emerald-400 border border-surface-700">SaaS v1.0</span>
+            </div>
+            <span id="headerStoreName" class="text-xs text-slate-400">Pusat Operasional Servis</span>
+          </div>
+        </div>
+
+        <!-- Multi-Location Switcher & User Profile -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Branch Switcher Dropdown (Multi-Location) -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 text-xs hidden md:inline"><i class="fa-solid fa-store"></i></span>
+            <select id="headerBranchSelect" onchange="handleBranchSwitch()" class="py-1.5 px-2.5 rounded-xl bg-surface-800 text-xs font-bold text-slate-200 border border-surface-700 cursor-pointer hover:border-emerald-500 transition">
+              <option value="Semua">🏢 Semua Cabang</option>
+              <!-- Dynamically populated from settings.branches -->
+            </select>
+          </div>
+
+          <div class="text-right hidden sm:block pl-2 border-l border-surface-750">
+            <div class="text-xs font-bold text-white" id="userDisplayName">Budi Santoso</div>
+            <div class="flex items-center justify-end gap-1.5">
+              <span id="userRoleBadge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">OWNER</span>
+            </div>
+          </div>
+          <button onclick="handleLogout()" title="Keluar dari sistem" class="p-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 border border-surface-700 text-slate-400 hover:text-red-400 transition">
+            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN TABS NAVIGATION -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 overflow-x-auto custom-scrollbar flex gap-2 pt-1 border-t border-surface-850">
+        <button onclick="switchTab('orders')" id="tabBtn-orders" class="px-4 py-2.5 text-xs font-bold border-b-2 border-emerald-400 text-emerald-400 transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Pesanan Servis</span>
+          <span id="activeOrdersBadge" class="px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono">0</span>
+        </button>
+
+        <button onclick="switchTab('reports')" id="tabBtn-reports" class="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap owner-only">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Laporan Keuangan</span>
+          <span class="text-[9px] font-extrabold px-1 rounded bg-amber-500/20 text-amber-300">Owner</span>
+        </button>
+
+        <button onclick="switchTab('staff')" id="tabBtn-staff" class="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap owner-only">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>Manajemen Staf</span>
+          <span class="text-[9px] font-extrabold px-1 rounded bg-amber-500/20 text-amber-300">Owner</span>
+        </button>
+
+        <button onclick="switchTab('spareparts')" id="tabBtn-spareparts" class="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span>Katalog Sparepart</span>
+        </button>
+
+        <button onclick="switchTab('settings')" id="tabBtn-settings" class="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap owner-only">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Pengaturan Toko & WA</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+      <!-- ===================================== -->
+      <!-- TAB 1: SERVICE ORDERS (OPERATIONAL)   -->
+      <!-- ===================================== -->
+      <div id="tab-orders" class="space-y-6">
+
+        <!-- METRICS BENTO CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Aktif</span>
+            <div id="metricActiveOrders" class="text-xl sm:text-2xl font-black text-white font-mono">0</div>
+            <span class="text-[10px] text-slate-500">Unit di workshop</span>
+          </div>
+
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">Dikerjakan</span>
+            <div id="metricInProgress" class="text-xl sm:text-2xl font-black text-amber-400 font-mono">0</div>
+            <span class="text-[10px] text-slate-500">Proses meja teknisi</span>
+          </div>
+
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400 block mb-1">Menunggu Part</span>
+            <div id="metricWaitingParts" class="text-xl sm:text-2xl font-black text-blue-400 font-mono">0</div>
+            <span class="text-[10px] text-slate-500">On-hold komponen</span>
+          </div>
+
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">Siap Diambil</span>
+            <div id="metricReadyPickup" class="text-xl sm:text-2xl font-black text-emerald-400 font-mono">0</div>
+            <span class="text-[10px] text-slate-500">QC Lolos, siap serah</span>
+          </div>
+
+          <div class="col-span-2 sm:col-span-1 bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 block mb-1">Selesai & Diambil</span>
+            <div id="metricCompletedThisMonth" class="text-xl sm:text-2xl font-black text-purple-400 font-mono">0</div>
+            <span class="text-[10px] text-slate-500">Omzet terverifikasi</span>
+          </div>
+        </div>
+
+        <!-- SEARCH, FILTERS & ACTION BAR -->
+        <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          <div class="flex-1 flex flex-wrap items-center gap-2">
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-[200px]">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+              <input type="text" id="orderSearchInput" oninput="debounceOrdersFetch()" placeholder="Cari Nama Pelanggan, No WA, No Tiket, atau Barang..." class="w-full pl-9 pr-3 py-2 rounded-xl text-xs">
+            </div>
+
+            <!-- Status Filter -->
+            <select id="filterStatus" onchange="fetchOrders()" class="py-2 px-3 rounded-xl text-xs font-medium">
+              <option value="Semua">Semua Status</option>
+              <option value="Pesanan Diterima">Pesanan Diterima</option>
+              <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+              <option value="Menunggu Stok / Sparepart">Menunggu Stok / Sparepart</option>
+              <option value="Selesai">Selesai (Siap Diambil)</option>
+              <option value="Selesai & Diambil">Selesai & Diambil (Lunas)</option>
+              <option value="Gagal Servis / Batal">Gagal Servis / Batal</option>
+            </select>
+
+            <!-- Category Filter -->
+            <select id="filterCategory" onchange="fetchOrders()" class="py-2 px-3 rounded-xl text-xs font-medium">
+              <option value="Semua">Semua Kategori</option>
+              <option value="gadget">HP & Gadget</option>
+              <option value="laptop">Laptop & PC</option>
+              <option value="vehicle">Bengkel Motor/Mobil</option>
+              <option value="printing">Percetakan & Banner</option>
+              <option value="other">Lainnya</option>
+            </select>
+
+            <!-- Sort Filter (Default: Pertama Kali Dibuat / FIFO) -->
+            <select id="sortOrders" onchange="fetchOrders()" class="py-2 px-3 rounded-xl text-xs font-semibold bg-surface-800 text-amber-300 border border-amber-500/30">
+              <option value="oldest" selected>⏳ Urutan: Pertama Dibuat (FIFO)</option>
+              <option value="newest">⚡ Urutan: Terbaru Dibuat</option>
+            </select>
+          </div>
+
+          <!-- Add New Order CTA -->
+          <button onclick="openNewOrderModal()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition whitespace-nowrap">
+            <i class="fa-solid fa-plus"></i>
+            <span>Buat Pesanan Baru (Drop-off)</span>
+          </button>
+        </div>
+
+        <!-- ORDERS LIST TABLE & CARDS -->
+        <div class="bg-surface-900 border border-surface-750 rounded-2xl overflow-hidden shadow-xl">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-850 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-750 font-bold">
+                <tr>
+                  <th class="p-3.5">Tiket & Tgl</th>
+                  <th class="p-3.5">Pelanggan & WA</th>
+                  <th class="p-3.5">Unit & Keluhan</th>
+                  <th class="p-3.5">Dokumentasi Fisik</th>
+                  <th class="p-3.5">Teknisi</th>
+                  <th class="p-3.5">Status Pengerjaan</th>
+                  <th class="p-3.5 text-right">Biaya / Pembayaran</th>
+                  <th class="p-3.5 text-center">Aksi Cepat</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody" class="divide-y divide-surface-800 font-normal">
+                <!-- Dynamically Populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div id="ordersEmptyState" class="hidden p-12 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-surface-800 text-slate-400 flex items-center justify-center mx-auto text-xl">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <p class="text-sm text-slate-300 font-bold">Tidak ada pesanan servis ditemukan</p>
+            <p class="text-xs text-slate-500">Coba ubah filter pencarian atau buat tiket servis baru.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 2: MONTHLY FINANCIAL REPORTING    -->
+      <!-- ===================================== -->
+      <div id="tab-reports" class="hidden space-y-6">
+
+        <!-- REPORT HEADER & FILTER CONTROLS -->
+        <div class="bg-surface-900 border border-surface-750 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Financial Analytics</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">Hanya Berbasis Sukses Diambil</span>
+            </div>
+            <h2 class="text-lg font-black text-white tracking-tight mt-1">Laporan Omzet Bulanan</h2>
+            <p class="text-xs text-slate-400">Unit berstatus <b class="text-red-400">Gagal Servis / Batal</b> dieksklusi dari pendapatan (nilai nominal Rp 0).</p>
+          </div>
+
+          <!-- Month, Year, Branch Selectors & Export CTA -->
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="reportBranchSelect" onchange="fetchMonthlyReport()" class="py-2 px-3 rounded-xl text-xs font-semibold bg-surface-800 text-slate-200">
+              <option value="Semua">🏢 Semua Cabang (Konsolidasi)</option>
+              <!-- Dynamically populated -->
+            </select>
+
+            <select id="reportMonthSelect" onchange="fetchMonthlyReport()" class="py-2 px-3 rounded-xl text-xs font-semibold">
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10" selected>Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+
+            <select id="reportYearSelect" onchange="fetchMonthlyReport()" class="py-2 px-3 rounded-xl text-xs font-semibold">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+            </select>
+
+            <button onclick="downloadFinancialCSV()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Ekspor CSV</span>
+            </button>
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 font-bold text-xs border border-surface-700 transition">
+              <i class="fa-solid fa-print"></i>
+              <span>Cetak</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- FINANCIAL KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <!-- Total Revenue -->
+          <div class="col-span-2 lg:col-span-1 bg-surface-900 border border-emerald-500/40 p-4 rounded-2xl relative overflow-hidden">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">Total Omzet Bersih</span>
+            <div id="repTotalRevenue" class="text-xl sm:text-2xl font-black text-emerald-300 font-mono">Rp 0</div>
+            <span class="text-[10px] text-slate-400 mt-1 block">Dari unit "Selesai & Diambil"</span>
+          </div>
+
+          <!-- Total Service Fee -->
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400 block mb-1">Omzet Jasa Servis</span>
+            <div id="repTotalServiceFee" class="text-lg sm:text-xl font-black text-white font-mono">Rp 0</div>
+            <span class="text-[10px] text-slate-500">Pendapatan murni keahlian</span>
+          </div>
+
+          <!-- Success Count -->
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">Unit Sukses Diambil</span>
+            <div id="repSuccessCount" class="text-lg sm:text-xl font-black text-emerald-400 font-mono">0 Unit</div>
+            <span class="text-[10px] text-slate-500">Transaksi valid diakui</span>
+          </div>
+
+          <!-- Failed Count -->
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-red-400 block mb-1">Unit Gagal / Batal</span>
+            <div id="repFailedCount" class="text-lg sm:text-xl font-black text-red-400 font-mono">0 Unit</div>
+            <span class="text-[10px] text-slate-500">Omzet terhitung Rp 0</span>
+          </div>
+
+          <!-- Success Rate -->
+          <div class="bg-surface-900 border border-surface-750 p-4 rounded-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">Success Rate</span>
+            <div id="repSuccessRate" class="text-lg sm:text-xl font-black text-amber-300 font-mono">100%</div>
+            <span id="repAvgTicket" class="text-[10px] text-slate-400 block">AOV: Rp 0</span>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN BENTO: BY CATEGORY & TECHNICIAN COMMISSIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Category Breakdown -->
+          <div class="bg-surface-900 border border-surface-750 p-5 rounded-2xl space-y-4">
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-chart-simple text-emerald-400"></i>
+              <span>Distribusi Omzet Berdasarkan Kategori</span>
+            </h3>
+            <div id="repCategoryList" class="space-y-3">
+              <!-- Dynamically populated bars -->
+            </div>
+          </div>
+
+          <!-- Staff Performance & Commission -->
+          <div class="bg-surface-900 border border-surface-750 p-5 rounded-2xl space-y-4">
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-award text-amber-400"></i>
+              <span>Performa Teknisi & Estimasi Komisi</span>
+            </h3>
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-xs text-left">
+                <thead class="text-slate-400 border-b border-surface-750 text-[10px] uppercase font-bold">
+                  <tr>
+                    <th class="pb-2">Teknisi</th>
+                    <th class="pb-2 text-center">Unit Sukses</th>
+                    <th class="pb-2 text-right">Omzet Unit</th>
+                    <th class="pb-2 text-right">Komisi (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="repTechTableBody" class="divide-y divide-surface-800">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LOG TRANSAKSI SUKSES VS LOG GAGAL -->
+        <div class="space-y-4">
+          <!-- Successful Transactions Table -->
+          <div class="bg-surface-900 border border-surface-750 rounded-2xl overflow-hidden">
+            <div class="p-4 bg-surface-850 border-b border-surface-750 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider">Log Transaksi Sukses & Diambil (Omzet Terkunci)</h3>
+              </div>
+              <span id="repSuccessTableBadge" class="text-xs font-mono text-emerald-400 font-bold">0 Transaksi</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-surface-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-800">
+                  <tr>
+                    <th class="p-3">Tiket & Tgl Selesai</th>
+                    <th class="p-3">Pelanggan</th>
+                    <th class="p-3">Unit Barang</th>
+                    <th class="p-3">Teknisi</th>
+                    <th class="p-3 text-right">Biaya Jasa</th>
+                    <th class="p-3 text-right">Biaya Part</th>
+                    <th class="p-3 text-right">Total Akhir</th>
+                    <th class="p-3 text-center">Metode</th>
+                  </tr>
+                </thead>
+                <tbody id="repSuccessTableBody" class="divide-y divide-surface-800">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Failed Transactions Log (Explicit Rp 0) -->
+          <div class="bg-surface-900 border border-red-900/40 rounded-2xl overflow-hidden">
+            <div class="p-4 bg-red-950/30 border-b border-red-900/40 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
+                <h3 class="text-xs font-bold text-red-200 uppercase tracking-wider">Log Pesanan Gagal Servis / Batal (Dieksklusi • Rp 0)</h3>
+              </div>
+              <span class="text-xs text-red-300 font-semibold">Tidak Menambah Omzet</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-surface-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-800">
+                  <tr>
+                    <th class="p-3">Tiket & Tgl</th>
+                    <th class="p-3">Pelanggan</th>
+                    <th class="p-3">Unit</th>
+                    <th class="p-3">Keluhan Awal</th>
+                    <th class="p-3">Alasan Gagal / Catatan Teknisi</th>
+                    <th class="p-3 text-right">Nominal Omzet</th>
+                  </tr>
+                </thead>
+                <tbody id="repFailedTableBody" class="divide-y divide-surface-800">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 3: STAFF & USER MANAGEMENT        -->
+      <!-- ===================================== -->
+      <div id="tab-staff" class="hidden space-y-6">
+        <div class="bg-surface-900 border border-surface-750 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-black text-white tracking-tight">Manajemen Staf & Teknisi</h2>
+            <p class="text-xs text-slate-400">Kelola akun kasir, teknisi spesialis, dan atur persentase komisi pengerjaan.</p>
+          </div>
+          <button onclick="openNewStaffModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-bold text-xs flex items-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Tambah Staf / Teknisi</span>
+          </button>
+        </div>
+
+        <div class="bg-surface-900 border border-surface-750 rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-surface-850 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-750 font-bold">
+                <tr>
+                  <th class="p-3.5">Nama & Kontak</th>
+                  <th class="p-3.5">Username</th>
+                  <th class="p-3.5">Role / Peran</th>
+                  <th class="p-3.5 text-center">Komisi (%)</th>
+                  <th class="p-3.5 text-center">Status Akun</th>
+                  <th class="p-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody" class="divide-y divide-surface-800">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 4: SPAREPARTS & INVENTORY CATALOG -->
+      <!-- ===================================== -->
+      <div id="tab-spareparts" class="space-y-6 hidden">
+        <div class="bg-surface-900 border border-surface-750 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-black text-white tracking-tight">Katalog Suku Cadang & Bahan</h2>
+            <p class="text-xs text-slate-400">Pantau stok komponen, harga modal, dan harga jual ke konsumen.</p>
+          </div>
+          <button onclick="openNewSparepartModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-bold text-xs flex items-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-plus"></i>
+            <span>Tambah Sparepart</span>
+          </button>
+        </div>
+
+        <div class="bg-surface-900 border border-surface-750 rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-surface-850 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-750 font-bold">
+                <tr>
+                  <th class="p-3.5">Nama Suku Cadang</th>
+                  <th class="p-3.5">Kategori</th>
+                  <th class="p-3.5 text-center">Stok Tersedia</th>
+                  <th class="p-3.5 text-right">Harga Modal</th>
+                  <th class="p-3.5 text-right">Harga Jual</th>
+                  <th class="p-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="sparepartsTableBody" class="divide-y divide-surface-800">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 5: STORE SETTINGS, MULTI-CABANG, KATEGORI & QRIS -->
+      <!-- ===================================== -->
+      <div id="tab-settings" class="hidden space-y-6">
+
+        <!-- SUB-GRID: SETTINGS BENTO -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- LEFT 2 COLS: STORE IDENTITY & WHATSAPP TEMPLATES -->
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-surface-900 border border-surface-750 p-6 rounded-2xl space-y-5">
+              <div>
+                <h2 class="text-lg font-black text-white tracking-tight">Pengaturan Identitas Toko & WhatsApp</h2>
+                <p class="text-xs text-slate-400">Konfigurasi alamat pada nota servis dan template pesan otomatis WhatsApp.</p>
+              </div>
+
+              <form id="settingsForm" onsubmit="saveSettings(event)" class="space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block font-bold text-slate-300 mb-1">Nama Toko / Workshop</label>
+                    <input type="text" id="setStoreName" required class="w-full p-2.5 rounded-xl">
+                  </div>
+                  <div>
+                    <label class="block font-bold text-slate-300 mb-1">Nomor WhatsApp Resmi</label>
+                    <input type="text" id="setPhone" required class="w-full p-2.5 rounded-xl">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1">Tagline / Deskripsi Usaha</label>
+                  <input type="text" id="setTagline" class="w-full p-2.5 rounded-xl">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1">Alamat Kantor / Workshop Utama</label>
+                  <textarea id="setAddress" rows="2" class="w-full p-2.5 rounded-xl"></textarea>
+                </div>
+
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="font-bold text-slate-300">Template Pesan WhatsApp Update Servis</label>
+                    <span class="text-[10px] text-emerald-400">Variabel: {nama_pelanggan}, {nama_barang}, {nomor_tiket}, {status}, {link_tracking}</span>
+                  </div>
+                  <textarea id="setWaTemplate" rows="4" class="w-full p-2.5 rounded-xl font-mono text-[11px]"></textarea>
+                </div>
+
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="font-bold text-slate-300">Template Pesan WA Persetujuan Biaya (Online Quote)</label>
+                    <span class="text-[10px] text-amber-400">Variabel: {nama_pelanggan}, {nama_barang}, {estimasi_biaya}, {link_tracking}</span>
+                  </div>
+                  <textarea id="setWaQuoteTemplate" rows="4" class="w-full p-2.5 rounded-xl font-mono text-[11px]"></textarea>
+                </div>
+
+                <button type="submit" class="py-2.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black text-xs transition">
+                  Simpan Perubahan Pengaturan
+                </button>
+              </form>
+            </div>
+
+            <!-- MULTI-LOCATION / CABANG MANAGEMENT -->
+            <div class="bg-surface-900 border border-surface-750 p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-store text-emerald-400"></i>
+                    <span>Manajemen Cabang (Multi-Location Support)</span>
+                  </h3>
+                  <p class="text-xs text-slate-400">Kelola operasional dan laporan keuangan di berbagai outlet / cabang tempat servis.</p>
+                </div>
+                <button onclick="openNewBranchModal()" class="px-3.5 py-2 rounded-xl bg-surface-800 hover:bg-emerald-600 hover:text-white border border-surface-700 text-slate-200 text-xs font-bold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-plus text-xs"></i>
+                  <span>Tambah Cabang</span>
+                </button>
+              </div>
+
+              <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-surface-850 text-slate-400 uppercase text-[10px] tracking-wider border-b border-surface-750 font-bold">
+                    <tr>
+                      <th class="p-3">Nama Cabang</th>
+                      <th class="p-3">Alamat</th>
+                      <th class="p-3">Kontak WA</th>
+                      <th class="p-3 text-center">Status</th>
+                      <th class="p-3 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="branchesTableBody" class="divide-y divide-surface-800">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- CUSTOM BUSINESS CATEGORIES MANAGEMENT -->
+            <div class="bg-surface-900 border border-surface-750 p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-tags text-blue-400"></i>
+                    <span>Kategori Usaha Kustom</span>
+                  </h3>
+                  <p class="text-xs text-slate-400">Tambahkan jenis jasa perbaikan baru yang tidak ada pada daftar default toko.</p>
+                </div>
+                <button onclick="openNewCategoryModal()" class="px-3.5 py-2 rounded-xl bg-surface-800 hover:bg-blue-600 hover:text-white border border-surface-700 text-slate-200 text-xs font-bold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-plus text-xs"></i>
+                  <span>Tambah Kategori</span>
+                </button>
+              </div>
+
+              <div id="categoriesListGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT 1 COL: LOGO & DIGITAL PAYMENT SETTINGS -->
+          <div class="space-y-6">
+            <!-- LOGO USHA & BRANDING (OWNER ONLY) -->
+            <div class="bg-surface-900 border border-surface-750 p-6 rounded-2xl space-y-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-image text-emerald-400"></i>
+                <span>Logo Usaha & Branding</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Ganti logo toko yang tampil pada header aplikasi, tautan tracking pelanggan, dan kop nota digital / PDF.
+              </p>
+
+              <div class="bg-surface-850 p-4 rounded-2xl border border-surface-750 text-center shadow-inner flex items-center justify-center min-h-[90px]">
+                <img id="settingsLogoPreview" src="/uploads/nakahasite-logo.svg" alt="Logo Toko" class="max-h-20 max-w-full object-contain">
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-300">Pilih Berkas Logo Baru (PNG / SVG / JPG)</label>
+                <input type="file" id="inpLogoFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-surface-800 file:text-white hover:file:bg-surface-700">
+                <button type="button" onclick="uploadStoreLogo()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span>Simpan & Terapkan Logo Baru</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- QRIS & PEMBAYARAN DIGITAL -->
+            <div class="bg-surface-900 border border-surface-750 p-6 rounded-2xl space-y-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-qrcode text-red-400"></i>
+                <span>QRIS & Pembayaran Digital</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Kode QRIS ini akan otomatis ditampilkan pada halaman tracking pelanggan ketika unit telah siap diambil untuk memudahkan pembayaran non-tunai.
+              </p>
+
+              <div class="bg-white p-3 rounded-2xl border border-surface-700 text-center shadow-lg">
+                <img id="settingsQrisPreview" src="/uploads/sample-qris.svg" alt="QRIS Toko" class="w-full max-h-56 object-contain mx-auto rounded-lg">
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-300">Upload Gambar QRIS Toko Anda</label>
+                <input type="file" id="inpQrisFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-surface-800 file:text-white hover:file:bg-surface-700">
+                <button type="button" onclick="uploadStoreQris()" class="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-upload"></i>
+                  <span>Simpan & Terapkan QRIS Baru</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 1: NEW SERVICE ORDER (DROP-OFF & INTAKE) -->
+  <!-- ============================================== -->
+  <div id="newOrderModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-3 sm:p-4 backdrop-blur-sm overflow-y-auto">
+    <div class="max-w-2xl w-full bg-surface-900 border border-surface-700 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 my-8">
+      
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-file-circle-plus"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Buat Pesanan Servis Baru</h3>
+            <p class="text-[11px] text-slate-400">Penerimaan unit & dokumentasi anti-klaim</p>
+          </div>
+        </div>
+        <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="space-y-4 text-xs">
+        
+        <!-- Branch Selection & Customer Info Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Cabang Masuk *</label>
+            <select id="inpBranch" class="w-full p-2.5 rounded-xl font-bold text-emerald-400">
+              <!-- Dynamically populated from settings.branches -->
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Nama Lengkap Pelanggan *</label>
+            <input type="text" id="inpCustomerName" required placeholder="Contoh: Rian Kusuma" class="w-full p-2.5 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">No WhatsApp Pelanggan *</label>
+            <input type="tel" id="inpCustomerPhone" required placeholder="Contoh: 081234567890" class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- Device, Category & IMEI / Serial Number Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Kategori Usaha *</label>
+            <select id="inpCategory" required class="w-full p-2.5 rounded-xl font-medium">
+              <!-- Dynamically populated from settings.categories -->
+              <option value="gadget">HP & Gadget</option>
+              <option value="laptop">Laptop & PC</option>
+              <option value="vehicle">Bengkel Kendaraan</option>
+              <option value="printing">Percetakan / Cetak</option>
+              <option value="other">Jasa Lainnya</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-300 mb-1">Merk & Model / Spesifikasi Barang *</label>
+            <input type="text" id="inpDeviceModel" required placeholder="Contoh: iPhone 13 Pro Max 256GB Sierra Blue" class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- IMEI & Serial Number Scanning Quick Row (Khusus HP / Laptop) -->
+        <div class="p-3 rounded-2xl bg-surface-850 border border-surface-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-slate-300 text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-barcode text-amber-400"></i>
+              <span>Nomor Seri / IMEI Perangkat (Khusus HP, Tablet & Laptop)</span>
+            </label>
+            <button type="button" onclick="openImeiScannerModal()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 text-[11px] font-bold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-camera"></i>
+              <span>Scan Barcode / IMEI via Kamera</span>
+            </button>
+          </div>
+          <input type="text" id="inpSerialOrImei" placeholder="Scan barcode atau ketik manual (contoh: 358912093847120 / C02X...)" class="w-full p-2 rounded-xl text-xs font-mono text-amber-300">
+          <p class="text-[10px] text-slate-500">Mencegah salah input dan memastikan unit tercatat akurat dengan nomor seri fisik pabrikan.</p>
+        </div>
+
+        <!-- Issue Description -->
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Deskripsi Kerusakan / Permintaan Pekerjaan *</label>
+          <textarea id="inpIssueDescription" required rows="2" placeholder="Jelaskan kendala, gejala kerusakan, atau spesifikasi cetak..." class="w-full p-2.5 rounded-xl"></textarea>
+        </div>
+
+        <!-- Visual Condition & Anti-Claim Section -->
+        <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-camera"></i>
+              <span>Dokumentasi Fisik & Anti-Tertukar</span>
+            </span>
+            <span class="text-[10px] text-slate-400">Maks. 6 Foto</span>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Foto Kondisi Fisik Saat Diterima (Lecet/Penyok/Spesimen)</label>
+            <input type="file" id="inpPhotos" multiple accept="image/*" onchange="previewUploadPhotos(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-surface-700 file:text-white hover:file:bg-surface-600">
+            <div id="photoPreviewContainer" class="flex flex-wrap gap-2 mt-2"></div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Catatan Kondisi Fisik Awal</label>
+            <input type="text" id="inpConditionNotes" placeholder="Misal: Lecet di pojok kanan bawah, tombol volume sedikit keras" class="w-full p-2.5 rounded-xl">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Kelengkapan Barang yang Diserahkan (Pisahkan dengan koma)</label>
+            <input type="text" id="inpAccessories" placeholder="Misal: Unit HP, Adaptor Charger Original, SIM Tray" class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- Technician Assignment & Pricing -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Tugaskan Teknisi</label>
+            <select id="inpAssignedTo" class="w-full p-2.5 rounded-xl">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Estimasi Biaya (Rp)</label>
+            <input type="number" id="inpEstimatedCost" min="0" placeholder="0" class="w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Uang Muka / DP (Rp)</label>
+            <input type="number" id="inpDownPayment" min="0" placeholder="0" class="w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+
+        <!-- Online Quote Approval Dispatch Toggle -->
+        <div class="p-3.5 rounded-2xl bg-amber-950/30 border border-amber-800/60 flex items-start gap-3">
+          <input type="checkbox" id="inpSendQuoteNow" class="mt-0.5 w-4 h-4 rounded text-amber-500 bg-surface-900 border-surface-700 cursor-pointer">
+          <div>
+            <label for="inpSendQuoteNow" class="font-bold text-amber-300 cursor-pointer block text-xs">Terbitkan sebagai Penawaran Estimasi (Online Quote Approval)</label>
+            <p class="text-[11px] text-slate-400 mt-0.5">Bila dicentang, tiket akan berstatus "Menunggu Persetujuan". Pelanggan dapat menyetujui (Accept) atau menolak (Decline) estimasi biaya langsung melalui link WhatsApp sebelum perbaikan dikerjakan.</p>
+          </div>
+        </div>
+
+        <!-- Digital Signature Canvas -->
+        <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-300 text-xs">Tanda Tangan Digital Pelanggan (Persetujuan Drop-off)</span>
+            <button type="button" onclick="clearSignatureCanvas()" class="text-[11px] text-amber-400 hover:underline">
+              <i class="fa-solid fa-rotate-left"></i> Bersihkan Canvas
+            </button>
+          </div>
+          <div class="border border-surface-700 rounded-xl overflow-hidden bg-white">
+            <canvas id="signatureCanvas" width="580" height="110" class="w-full touch-none cursor-crosshair"></canvas>
+          </div>
+          <p class="text-[10px] text-slate-400">Tanda tangan langsung pada layar sentuh/mouse sebagai persetujuan kondisi awal dan estimasi biaya servis.</p>
+        </div>
+
+        <!-- Submit & Actions -->
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeNewOrderModal()" class="px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 font-bold transition">
+            Batal
+          </button>
+          <button type="submit" id="saveOrderBtn" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Simpan & Buat Tiket Servis</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 2: UPDATE STATUS & SERVICING DETAILS     -->
+  <!-- ============================================== -->
+  <div id="updateStatusModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-lg w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-white">Update Status & Pengerjaan</h3>
+          <p id="updTicketSubtitle" class="text-xs text-slate-400">NKH-0000-000 • iPhone 12</p>
+        </div>
+        <button onclick="closeUpdateStatusModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="updateStatusForm" onsubmit="handleUpdateStatus(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="updOrderId">
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Status Pengerjaan Terkini *</label>
+          <select id="updStatusSelect" onchange="toggleStatusSpecificFields()" required class="w-full p-2.5 rounded-xl font-bold">
+            <option value="Pesanan Diterima">Pesanan Diterima</option>
+            <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+            <option value="Menunggu Stok / Sparepart">Menunggu Stok / Sparepart</option>
+            <option value="Selesai">Selesai (Siap Diambil)</option>
+            <option value="Selesai & Diambil">Selesai & Diambil (Kunci Omzet)</option>
+            <option value="Gagal Servis / Batal">Gagal Servis / Batal (Omzet Rp 0)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Catatan Progres Teknisi *</label>
+          <textarea id="updNote" rows="2" required placeholder="Tuliskan perkembangan perbaikan atau kendala..." class="w-full p-2.5 rounded-xl"></textarea>
+        </div>
+
+        <!-- Locked Financial Warning for "Selesai & Diambil" -->
+        <div id="lockRevenueNotice" class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-800 text-purple-200 text-xs space-y-2">
+          <div class="flex items-center gap-2 font-bold text-purple-300">
+            <i class="fa-solid fa-lock"></i>
+            <span>Penguncian Nilai ke Laporan Keuangan Bulanan</span>
+          </div>
+          <p class="text-[11px] text-slate-300">Status "Selesai & Diambil" secara resmi mengunci nilai transaksi ini ke Omzet Bulanan Owner.</p>
+        </div>
+
+        <!-- Failure Warning for "Gagal Servis / Batal" -->
+        <div id="failedRevenueNotice" class="hidden p-3 rounded-xl bg-red-950/40 border border-red-800 text-red-200 text-xs space-y-1">
+          <div class="flex items-center gap-2 font-bold text-red-300">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Pengecualian Omzet (Rp 0)</span>
+          </div>
+          <p class="text-[11px] text-slate-300">Nilai transaksi akan otomatis diset menjadi Rp 0 dan dieksklusi dari akumulasi pendapatan Owner.</p>
+        </div>
+
+        <!-- Financial Inputs (Shown for Selesai / Selesai & Diambil) -->
+        <div id="financialInputsSection" class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Biaya Jasa Servis (Rp)</label>
+              <input type="number" id="updServiceFee" min="0" oninput="calculateTotalFinal()" class="w-full p-2 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Biaya Sparepart (Rp)</label>
+              <input type="number" id="updPartsTotal" min="0" oninput="calculateTotalFinal()" class="w-full p-2 rounded-xl font-mono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Total Biaya Final (Rp)</label>
+              <input type="number" id="updFinalCost" min="0" readonly class="w-full p-2 rounded-xl font-mono font-bold text-emerald-400 bg-surface-900">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Metode Pembayaran</label>
+              <select id="updPaymentMethod" class="w-full p-2 rounded-xl">
+                <option value="Tunai">Tunai / Cash</option>
+                <option value="QRIS BCA">QRIS BCA / Gopay / OVO</option>
+                <option value="Transfer Bank">Transfer Bank</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-2 border-t border-surface-800">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+            <input type="checkbox" id="updAutoWaCheck" checked class="rounded bg-surface-800 border-surface-700 text-emerald-500">
+            <span>Buka WhatsApp Pelanggan Setelah Update</span>
+          </label>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeUpdateStatusModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black">Simpan</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 3: 1-CLICK WHATSAPP SHARE DRAWER         -->
+  <!-- ============================================== -->
+  <div id="waModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-lg w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-xl"></i>
+          <h3 class="text-base font-bold text-white">1-Klik Kirim WhatsApp</h3>
+        </div>
+        <button onclick="closeWaModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-400">Pesan telah diformat otomatis dengan link tracking tokenized pelanggan:</p>
+        <div class="p-3.5 rounded-xl bg-surface-850 border border-surface-800 font-mono text-[11px] text-slate-200 whitespace-pre-wrap leading-relaxed" id="waMessagePreview">
+          <!-- Text preview -->
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="copyWaText()" class="flex-1 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-200 font-bold border border-surface-700 flex items-center justify-center gap-1.5 transition">
+            <i class="fa-solid fa-copy"></i>
+            <span>Salin Pesan</span>
+          </button>
+          <a id="waDirectSendBtn" href="#" target="_blank" class="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 transition">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span>Buka WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 4: NEW STAFF REGISTRATION (OWNER ONLY)   -->
+  <!-- ============================================== -->
+  <div id="newStaffModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-white">Tambah Staf / Teknisi Baru</h3>
+        <button onclick="closeNewStaffModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="newStaffForm" onsubmit="handleCreateStaff(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nama Lengkap *</label>
+          <input type="text" id="staffName" required placeholder="Misal: Joko Susilo" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Username Login *</label>
+          <input type="text" id="staffUsername" required placeholder="Misal: jokotech" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Password Awal *</label>
+          <input type="password" id="staffPassword" required placeholder="••••••••" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Peran / Role *</label>
+            <select id="staffRole" class="w-full p-2.5 rounded-xl font-bold">
+              <option value="technician">Teknisi</option>
+              <option value="staff">Kasir / Front Desk</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Komisi Servis (%)</label>
+            <input type="number" id="staffCommission" min="0" max="100" value="15" class="w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nomor WhatsApp Staf</label>
+          <input type="tel" id="staffPhone" placeholder="0812..." class="w-full p-2.5 rounded-xl">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeNewStaffModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black">Daftarkan Staf</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 5: NEW SPAREPART REGISTRATION            -->
+  <!-- ============================================== -->
+  <div id="newSparepartModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-white">Tambah Suku Cadang / Material</h3>
+        <button onclick="closeNewSparepartModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="newSparepartForm" onsubmit="handleCreateSparepart(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nama Suku Cadang / Bahan *</label>
+          <input type="text" id="partName" required placeholder="Contoh: Baterai iPhone 11 Original" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Kategori</label>
+            <select id="partCategory" class="w-full p-2.5 rounded-xl">
+              <option value="gadget">HP / Gadget</option>
+              <option value="laptop">Laptop / PC</option>
+              <option value="vehicle">Kendaraan</option>
+              <option value="printing">Percetakan</option>
+              <option value="general">Umum</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Stok Awal</label>
+            <input type="number" id="partStock" min="0" value="10" class="w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Harga Modal (Rp)</label>
+            <input type="number" id="partBuyPrice" min="0" placeholder="0" class="w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Harga Jual (Rp) *</label>
+            <input type="number" id="partSellPrice" required min="0" placeholder="0" class="w-full p-2.5 rounded-xl font-mono font-bold text-emerald-400">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeNewSparepartModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black">Simpan Sparepart</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 6: BARCODE & IMEI LIVE CAMERA SCANNER    -->
+  <!-- ============================================== -->
+  <div id="scannerModal" class="fixed inset-0 z-50 bg-black/90 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-barcode"></i>
+          <span>Scan IMEI / Barcode Kamera</span>
+        </h3>
+        <button onclick="closeImeiScannerModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300">Arahkan kamera HP / webcam ke stiker barcode IMEI atau nomor seri fisik perangkat:</p>
+
+      <!-- Video Scanner Viewport -->
+      <div class="relative rounded-2xl overflow-hidden bg-black border-2 border-dashed border-amber-500/50 min-h-[240px] flex items-center justify-center">
+        <div id="scannerReader" class="w-full"></div>
+      </div>
+
+      <div id="scannerResultBox" class="hidden p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs text-center font-mono font-bold">
+        <!-- Detection text -->
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+        <button type="button" onclick="closeImeiScannerModal()" class="px-5 py-2.5 rounded-xl bg-surface-800 text-slate-300 font-bold text-xs">
+          Tutup Scanner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 7: SEND ONLINE QUOTE VIA WHATSAPP        -->
+  <!-- ============================================== -->
+  <div id="sendQuoteModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span>Kirim Penawaran Estimasi Biaya</span>
+        </h3>
+        <button onclick="closeSendQuoteModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="sendQuoteForm" onsubmit="handleSendQuoteSubmit(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="quoteOrderId">
+
+        <div class="p-3 rounded-xl bg-surface-850 border border-surface-800">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Unit & Pelanggan:</span>
+          <p id="quoteOrderSubtitle" class="text-xs font-bold text-white font-mono">-</p>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Estimasi Total Biaya Perbaikan (Rp) *</label>
+          <input type="number" id="quoteEstCostInput" required min="0" class="w-full p-2.5 rounded-xl font-mono text-amber-300 font-bold">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Catatan Diagnosa & Detail Perbaikan *</label>
+          <textarea id="quoteNotesInput" required rows="3" placeholder="Contoh: Perlu penggantian IC Power dan pembersihan jalur korosi. Garansi 30 hari." class="w-full p-2.5 rounded-xl"></textarea>
+        </div>
+
+        <p class="text-[11px] text-slate-400">Pesan penawaran siap dikirim ke WhatsApp pelanggan dengan tautan persetujuan 1-klik (Accept / Decline).</p>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeSendQuoteModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-surface-950 font-black">
+            Kirim Penawaran ke WA
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 8: NEW BRANCH (MULTI-LOCATION)           -->
+  <!-- ============================================== -->
+  <div id="newBranchModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-store text-emerald-400"></i>
+          <span>Tambah Cabang Baru</span>
+        </h3>
+        <button onclick="closeNewBranchModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="newBranchForm" onsubmit="handleCreateBranch(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nama Cabang / Outlet *</label>
+          <input type="text" id="branchNameInput" required placeholder="Contoh: Cabang Bandung Dago" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Alamat Lengkap Cabang</label>
+          <textarea id="branchAddressInput" rows="2" placeholder="Jl. Ir. H. Juanda No. 102, Bandung" class="w-full p-2.5 rounded-xl"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nomor WhatsApp Cabang</label>
+          <input type="tel" id="branchPhoneInput" placeholder="0812..." class="w-full p-2.5 rounded-xl">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeNewBranchModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black">Simpan Cabang</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 9: NEW CUSTOM BUSINESS CATEGORY          -->
+  <!-- ============================================== -->
+  <div id="newCategoryModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-surface-900 border border-surface-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-tag text-blue-400"></i>
+          <span>Tambah Kategori Usaha Kustom</span>
+        </h3>
+        <button onclick="closeNewCategoryModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="newCategoryForm" onsubmit="handleCreateCategory(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nama Kategori Usaha *</label>
+          <input type="text" id="catNameInput" required placeholder="Contoh: Service Drone & Kamera" class="w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Pilihan Icon FontAwesome</label>
+          <select id="catIconInput" class="w-full p-2.5 rounded-xl">
+            <option value="fa-camera">Kamera / Foto (fa-camera)</option>
+            <option value="fa-plane">Drone / Aeromodelling (fa-plane)</option>
+            <option value="fa-clock">Jam Tangan / Arloji (fa-clock)</option>
+            <option value="fa-glasses">Optik & Kacamata (fa-glasses)</option>
+            <option value="fa-gamepad">PlayStation / Game Console (fa-gamepad)</option>
+            <option value="fa-guitar">Alat Musik & Gitar (fa-guitar)</option>
+            <option value="fa-bicycle">Sepeda & Skuter Listrik (fa-bicycle)</option>
+            <option value="fa-plug">Elektronik Rumah Tangga (fa-plug)</option>
+            <option value="fa-wrench">Servis Umum (fa-wrench)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Deskripsi Singkat</label>
+          <input type="text" id="catDescInput" placeholder="Contoh: Kalibrasi gimbal, pergantian motor brushless" class="w-full p-2.5 rounded-xl">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeNewCategoryModal()" class="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 font-bold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black">Simpan Kategori</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 10: VIEW ORDER FULL DETAILS (LIHAT LAGI) -->
+  <!-- ============================================== -->
+  <div id="viewOrderModal" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-3 sm:p-4 backdrop-blur-sm overflow-y-auto">
+    <div class="max-w-3xl w-full bg-surface-900 border border-surface-700 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 my-8">
+      
+      <!-- Header -->
+      <div class="flex items-start justify-between border-b border-surface-800 pb-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="viewTicketNo" class="font-mono font-black text-lg text-white">NKH-0000-000</span>
+            <span id="viewStatusBadge" class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-950 text-blue-400 border border-blue-800">Status</span>
+            <span id="viewQuoteBadge" class="hidden px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">Quote</span>
+          </div>
+          <p id="viewBranchAndDate" class="text-xs text-slate-400">📍 Cabang Sudirman • Didaftarkan pada 09 Okt 2026</p>
+        </div>
+        <button onclick="closeViewOrderModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Bento Detail Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        
+        <!-- Left Column: Customer, Unit & Condition Documentation -->
+        <div class="space-y-4">
+          <!-- Customer Info -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Informasi Pelanggan</span>
+            <div class="flex items-center justify-between">
+              <div>
+                <b id="viewCustomerName" class="text-white text-sm block">-</b>
+                <span id="viewCustomerPhone" class="text-slate-400 font-mono text-[11px] block">-</span>
+              </div>
+              <a id="viewCustomerWaBtn" href="#" target="_blank" class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1.5 transition">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>Chat WA</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Unit Specification & Identification -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Spesifikasi & Identitas Unit</span>
+            <div>
+              <b id="viewDeviceModel" class="text-white text-xs block">-</b>
+              <span id="viewCategoryBadge" class="inline-block mt-1 px-2 py-0.5 rounded bg-surface-800 text-slate-300 text-[10px] uppercase font-bold">Gadget</span>
+            </div>
+            <div id="viewSerialContainer" class="p-2 rounded-xl bg-surface-900 border border-surface-800 font-mono text-[11px] text-amber-300 flex items-center gap-2">
+              <i class="fa-solid fa-barcode text-xs"></i>
+              <span id="viewSerialOrImei">IMEI / Serial: -</span>
+            </div>
+          </div>
+
+          <!-- Issue & Problem Description -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-1.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">Keluhan / Kerusakan</span>
+            <p id="viewIssueDesc" class="text-slate-300 leading-relaxed whitespace-pre-wrap">-</p>
+          </div>
+
+          <!-- Condition Notes & Accessories -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Catatan Kondisi Fisik Awal:</span>
+              <p id="viewConditionNotes" class="text-slate-300">-</p>
+            </div>
+            <div class="pt-2 border-t border-surface-800">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Kelengkapan Diserahkan:</span>
+              <div id="viewAccessoriesList" class="flex flex-wrap gap-1 mt-1">
+                <!-- Tags -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Photos Gallery -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Dokumentasi Fisik Saat Diterima</span>
+            <div id="viewPhotosGallery" class="flex flex-wrap gap-2">
+              <!-- Photo previews -->
+            </div>
+          </div>
+
+          <!-- Digital Signature -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tanda Tangan Pelanggan Saat Drop-off</span>
+            <div id="viewSignatureBox" class="bg-white rounded-xl p-2 h-20 flex items-center justify-center border border-surface-700 overflow-hidden">
+              <!-- Signature canvas img -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Servicing, Pricing & Timeline -->
+        <div class="space-y-4">
+          <!-- Technician Assignment & Status -->
+          <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Penugasan Teknisi</span>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
+                  <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                  <b id="viewAssignedTo" class="text-white text-xs block">-</b>
+                  <span class="text-[10px] text-slate-400">Teknisi Penanggung Jawab</span>
+                </div>
+              </div>
+              <button onclick="openUpdateStatusModal(currentViewingOrderId)" class="px-2.5 py-1.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-200 font-bold text-[11px] border border-surface-700">
+                Update Status
+              </button>
+            </div>
+          </div>
+
+          <!-- Financial & Cost Breakdown Card -->
+          <div class="p-4 rounded-2xl bg-surface-850 border border-surface-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Rincian Keuangan & Biaya</span>
+              <span id="viewPaymentBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">Belum Bayar</span>
+            </div>
+
+            <div class="space-y-1.5 text-xs border-b border-surface-800 pb-2.5">
+              <div class="flex justify-between text-slate-400">
+                <span>Estimasi Awal Biaya:</span>
+                <span id="viewEstimatedCost" class="font-mono text-slate-200">Rp 0</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Biaya Jasa Servis:</span>
+                <span id="viewServiceFee" class="font-mono text-slate-200">Rp 0</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Biaya Sparepart / Bahan:</span>
+                <span id="viewPartsCost" class="font-mono text-slate-200">Rp 0</span>
+              </div>
+              <div class="flex justify-between text-amber-400">
+                <span>Uang Muka (DP):</span>
+                <span id="viewDownPayment" class="font-mono">-Rp 0</span>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-baseline pt-1">
+              <span class="font-bold text-white text-xs">Total Akhir Servis:</span>
+              <span id="viewFinalCost" class="text-lg font-black text-emerald-400 font-mono">Rp 0</span>
+            </div>
+            <div class="text-[10px] text-slate-400" id="viewPaymentMethod">Metode: Tunai</div>
+          </div>
+
+          <!-- Servicing Progress Timeline History -->
+          <div class="p-4 rounded-2xl bg-surface-850 border border-surface-800 space-y-3">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Riwayat Progres Pengerjaan (Timeline)</span>
+            <div id="viewTimelineContainer" class="space-y-2.5 max-h-56 overflow-y-auto custom-scrollbar pr-1">
+              <!-- Timeline items -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-surface-800">
+        <a id="viewPublicTrackBtn" href="#" target="_blank" class="px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-blue-400 hover:text-white border border-surface-700 font-bold text-xs flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Buka Tracking Pelanggan</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeViewOrderModal()" class="px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 font-bold text-xs transition">
+            Tutup
+          </button>
+          <button type="button" onclick="openEditOrderModal(currentViewingOrderId)" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black text-xs transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Edit Pesanan &amp; Biaya</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 11: EDIT ORDER & PRICING (EDIT LAGI)     -->
+  <!-- ============================================== -->
+  <div id="editOrderModal" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-3 sm:p-4 backdrop-blur-sm overflow-y-auto">
+    <div class="max-w-2xl w-full bg-surface-900 border border-surface-700 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 my-8">
+      
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Edit Pesanan &amp; Biaya</h3>
+            <p id="editOrderSubtitle" class="text-[11px] text-slate-400">NKH-0000-000 • Perbarui data dan nominal servis</p>
+          </div>
+        </div>
+        <button onclick="closeEditOrderModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="editOrderForm" onsubmit="handleEditOrderSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="editOrderId">
+
+        <!-- Branch & Customer Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Cabang *</label>
+            <select id="editInpBranch" class="w-full p-2.5 rounded-xl font-bold text-emerald-400">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Nama Pelanggan *</label>
+            <input type="text" id="editInpCustomerName" required class="w-full p-2.5 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">No WhatsApp *</label>
+            <input type="tel" id="editInpCustomerPhone" required class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- Category & Device Model & IMEI -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Kategori Usaha *</label>
+            <select id="editInpCategory" required class="w-full p-2.5 rounded-xl">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-300 mb-1">Merk &amp; Model / Spesifikasi Barang *</label>
+            <input type="text" id="editInpDeviceModel" required class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Nomor Seri / IMEI Perangkat</label>
+          <input type="text" id="editInpSerialOrImei" placeholder="Contoh: 358912093847120" class="w-full p-2 rounded-xl text-xs font-mono text-amber-300">
+        </div>
+
+        <!-- Problem Description -->
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Deskripsi Kerusakan / Permintaan Pekerjaan *</label>
+          <textarea id="editInpIssueDescription" required rows="2" class="w-full p-2.5 rounded-xl"></textarea>
+        </div>
+
+        <!-- Condition Notes & Accessories -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Catatan Kondisi Fisik Awal</label>
+            <input type="text" id="editInpConditionNotes" class="w-full p-2.5 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Kelengkapan Barang (Pisahkan dg koma)</label>
+            <input type="text" id="editInpAccessories" class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- Assigned Technician & Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Tugaskan Teknisi</label>
+            <select id="editInpAssignedTo" class="w-full p-2.5 rounded-xl">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Status Pengerjaan</label>
+            <select id="editInpStatus" class="w-full p-2.5 rounded-xl font-bold">
+              <option value="Pesanan Diterima">Pesanan Diterima</option>
+              <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+              <option value="Menunggu Stok / Sparepart">Menunggu Stok / Sparepart</option>
+              <option value="Selesai">Selesai (Siap Diambil)</option>
+              <option value="Selesai & Diambil">Selesai & Diambil (Lunas)</option>
+              <option value="Gagal Servis / Batal">Gagal Servis / Batal</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Status Pembayaran</label>
+            <select id="editInpPaymentStatus" class="w-full p-2.5 rounded-xl font-bold">
+              <option value="unpaid">Belum Bayar</option>
+              <option value="partial">Uang Muka / DP</option>
+              <option value="paid">LUNAS</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PRICING & COSTS EDIT SECTION (HARGA) -->
+        <div class="p-3.5 rounded-2xl bg-surface-850 border border-surface-800 space-y-3">
+          <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">
+            <i class="fa-solid fa-coins mr-1"></i> Penyesuaian Harga &amp; Biaya Servis
+          </span>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Estimasi Awal (Rp)</label>
+              <input type="number" id="editInpEstimatedCost" min="0" class="w-full p-2 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Uang Muka / DP (Rp)</label>
+              <input type="number" id="editInpDownPayment" min="0" class="w-full p-2 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Biaya Jasa Servis (Rp)</label>
+              <input type="number" id="editInpServiceFee" min="0" oninput="calculateEditTotalFinal()" class="w-full p-2 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Biaya Sparepart (Rp)</label>
+              <input type="number" id="editInpPartsCost" min="0" oninput="calculateEditTotalFinal()" class="w-full p-2 rounded-xl font-mono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Total Biaya Final (Rp) *</label>
+              <input type="number" id="editInpFinalCost" min="0" class="w-full p-2.5 rounded-xl font-mono font-black text-emerald-400 text-sm bg-surface-900 border border-emerald-500/40">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Metode Pembayaran</label>
+              <select id="editInpPaymentMethod" class="w-full p-2.5 rounded-xl">
+                <option value="Tunai">Tunai / Cash</option>
+                <option value="QRIS BCA">QRIS BCA / Gopay / OVO</option>
+                <option value="Transfer BCA">Transfer Bank BCA</option>
+                <option value="Transfer Bank Lain">Transfer Bank Lain</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technician Progress Notes & Reason for Edit -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Catatan Progres Teknisi</label>
+            <input type="text" id="editInpTechNotes" placeholder="Perkembangan perbaikan fisik/komponen..." class="w-full p-2.5 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Keterangan / Alasan Edit Data</label>
+            <input type="text" id="editInpReason" placeholder="Contoh: Penyesuaian harga sparepart pengganti LCD..." class="w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end gap-2 pt-2 border-t border-surface-800">
+          <button type="button" onclick="closeEditOrderModal()" class="px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 font-bold transition">
+            Batal
+          </button>
+          <button type="submit" id="saveEditOrderBtn" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-surface-950 font-black transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-check"></i>
+            <span>Simpan Perubahan Pesanan</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT APPLICATION LOGIC -->
+  <script src="nakahasite_app.js"></script>
+</body>
+</html>

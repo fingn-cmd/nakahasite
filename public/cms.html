@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Guru - Portal Pendaftaran & Kelola Profil Guru MasaDepanAnak</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            spPink: {
+              DEFAULT: '#FF4365',
+              hover: '#FA2B52',
+              light: '#FFF0F3',
+            },
+            spNavy: '#0F172A',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col font-sans bg-slate-100">
+
+  <!-- HEADER CMS -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-spPink text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="text-xl font-black text-white">masadepan<span class="text-spPink">anak</span></span>
+          <span class="ml-2 px-2 py-0.5 rounded-md bg-slate-800 text-amber-300 text-[10px] font-black uppercase border border-slate-700">CMS Guru</span>
+        </a>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-3">
+          <div id="authStatusHeader" class="hidden items-center gap-2">
+            <span id="teacherHeaderBadge" class="text-xs text-slate-300 font-bold bg-slate-800 px-3 py-1 rounded-lg border border-slate-700"></span>
+            <button onclick="logoutTeacher()" class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 text-xs font-bold border border-rose-500/30 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+
+          <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors">
+            &larr; Website Utama
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CMS CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- VIEW 1: CMS GATEWAY / SELECTION (When Not Logged In) -->
+    <div id="cmsGatewayView" class="space-y-6">
+      
+      <!-- Welcome Hero Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white p-8 rounded-3xl border border-slate-800 shadow-md relative overflow-hidden">
+        <div class="max-w-2xl relative z-10 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-spPink/20 border border-spPink/30 text-pink-300 text-xs font-extrabold">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Portal Pendidik Mandiri Terisolasi</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-black leading-tight">
+            Area Khusus Guru & Pendidik Privat
+          </h1>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Bergabunglah dengan ratusan guru hebat di <b>MasaDepanAnak</b>. Anda dapat mendaftar baru atau masuk untuk mengelola profil, tarif, foto, dan berkas CV Anda secara privat dan aman.
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Choice Cards: Pendaftaran Baru VS Masuk Akun Guru -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1: DAFTAR GURU BARU (Dedicated Button) -->
+        <div class="bg-white rounded-3xl p-7 border-2 border-spPink shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 bg-spPink text-white text-[11px] font-black px-4 py-1 rounded-bl-2xl uppercase tracking-wider">
+            Direkomendasikan
+          </div>
+          
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-spPink/10 text-spPink flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Tambah Guru Baru</h2>
+              <p class="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                Belum terdaftar? Isi formulir pendaftaran lengkap dengan foto dan dokumen CV untuk langsung tayang di katalog website.
+              </p>
+            </div>
+
+            <ul class="space-y-2 text-xs font-bold text-slate-700 pt-2">
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Upload Foto Profil Jelas</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Upload Dokumen Berkas CV (PDF / Gambar)</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Tentukan Tarif Sendiri & Terima Order via WA</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-6">
+            <button onclick="startRegistrationFlow()" class="w-full py-3.5 bg-spPink hover:bg-spPink-hover text-white font-extrabold text-sm rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-plus-circle"></i>
+              <span>Mulai Pendaftaran Guru Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 2: LOGIN AKUN GURU SAYA -->
+        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Masuk ke Profil Guru Saya</h2>
+              <p class="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                Sudah pernah mendaftar? Masukkan Nomor WhatsApp atau Email Anda untuk membuka dan mengedit data profil Anda sendiri.
+              </p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp atau Email Terdaftar</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                  </span>
+                  <input type="text" id="teacherLoginInput" placeholder="Cth: 08123456789 atau nama@email.com" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-slate-900">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6">
+            <button onclick="loginTeacherWithCredential()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Buka Profil Saya</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: TEACHER PROFILE EDITOR (ISOLATED - ONLY SHOWS OWN DATA) -->
+    <div id="cmsEditorView" class="hidden space-y-6">
+
+      <!-- Active Profile Banner -->
+      <div class="bg-slate-900 text-white p-6 sm:p-7 rounded-3xl shadow-sm border border-slate-800 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <img id="cmsActiveAvatarBadge" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" class="w-16 h-16 rounded-2xl object-cover border-2 border-spPink shadow-xs">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                  <i class="fa-solid fa-circle-check mr-1"></i>Akun Guru Aktif
+                </span>
+                <span id="cmsCurrentIdBadge" class="text-[10px] text-slate-400 font-mono"></span>
+              </div>
+              <h1 class="text-xl sm:text-2xl font-black mt-1" id="cmsTeacherProfileName">
+                Profil Saya
+              </h1>
+              <p class="text-xs text-slate-300 mt-0.5" id="cmsTeacherProfileSubtext">
+                Anda hanya dapat mengedit dan melihat data profil Anda sendiri.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.open('index.html', '_blank')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Lihat di Website</span>
+            </button>
+            <button type="button" onclick="logoutTeacher()" class="px-3.5 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold text-xs rounded-xl border border-rose-500/30 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM UPLOAD DATA GURU -->
+      <form id="teacherCmsForm" class="space-y-6">
+        
+        <!-- STEP 1: FOTO PROFIL -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-black">1</span>
+              Foto Profil Guru
+            </h2>
+            <span class="text-xs font-bold text-spPink">Wajib Foto Jelas</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-5">
+            <div class="relative shrink-0">
+              <img id="cmsAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" class="w-24 h-24 rounded-2xl object-cover border-2 border-slate-200 shadow-xs">
+            </div>
+            <div class="flex-1 w-full space-y-2">
+              <div class="flex flex-wrap gap-2">
+                <input type="file" id="cmsAvatarFileInput" class="hidden" accept="image/*">
+                <button type="button" onclick="document.getElementById('cmsAvatarFileInput').click()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-camera"></i>
+                  <span>Pilih Foto dari Komputer</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-500">
+                atau gunakan URL gambar eksternal:
+                <input type="text" id="cmsAvatarUrl" placeholder="https://images.unsplash.com/..." class="mt-1 w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: UPLOAD DOKUMEN CV & KUALIFIKASI -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-black">2</span>
+              Upload Berkas Dokumen CV / Sertifikat
+            </h2>
+            <span class="text-xs font-bold text-emerald-700">PDF / Dokumen / Foto</span>
+          </div>
+
+          <div class="p-5 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 text-center space-y-3">
+            <i class="fa-solid fa-file-pdf text-3xl text-rose-500"></i>
+            <div>
+              <p class="text-xs font-extrabold text-slate-800">Unggah Dokumen CV Anda</p>
+              <p class="text-[11px] text-slate-500">Format yang didukung: PDF, DOCX, JPG, PNG (Maks 50MB)</p>
+            </div>
+            
+            <input type="file" id="cmsCvFileInput" class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+            
+            <div class="pt-1 flex flex-wrap items-center justify-center gap-3">
+              <button type="button" onclick="document.getElementById('cmsCvFileInput').click()" class="px-4 py-2 bg-spPink hover:bg-spPink-hover text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors">
+                <i class="fa-solid fa-arrow-up-from-bracket mr-1"></i>
+                Pilih File Dokumen CV
+              </button>
+              <div id="cmsCvFileNameDisplay" class="text-xs font-bold text-slate-600">Belum ada file dipilih</div>
+            </div>
+          </div>
+
+          <!-- Teks Riwayat Pendidikan & Pengalaman -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Riwayat Pendidikan (1 baris per gelar)</label>
+              <textarea id="cmsEducation" rows="3" placeholder="S1 Matematika ITB (2018)&#10;S2 Matematika Murni (2021)" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-slate-900"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman Mengajar</label>
+              <textarea id="cmsExperience" rows="3" placeholder="6 Tahun Guru Les Privat&#10;Pelatih Olimpiade Sains Nasional" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-slate-900"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: BIODATA, SPESIALISASI & TARIF -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-black">3</span>
+              Biodata, Mata Pelajaran & Tarif Belajar
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap & Gelar *</label>
+              <input type="text" id="cmsName" required placeholder="Cth: Dr. Arya Wijaya, M.Sc." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-slate-900">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Mata Pelajaran Utama *</label>
+              <select id="cmsSubject" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none">
+                <option value="Matematika">📐 Matematika</option>
+                <option value="Bahasa Inggris">🇬🇧 Bahasa Inggris</option>
+                <option value="Mengaji">📖 Mengaji & Tahsin</option>
+                <option value="Bahasa Mandarin">🇨🇳 Bahasa Mandarin</option>
+                <option value="Fisika">⚛️ Fisika</option>
+                <option value="Piano">🎹 Piano</option>
+                <option value="Bahasa Jepang">🇯🇵 Bahasa Jepang</option>
+                <option value="Menyanyi">🎤 Menyanyi (Vokal)</option>
+                <option value="Bahasa Arab">🇸🇦 Bahasa Arab</option>
+                <option value="Kimia">🧪 Kimia</option>
+                <option value="Bahasa Jerman">🇩🇪 Bahasa Jerman</option>
+                <option value="Menggambar">🎨 Menggambar & Seni</option>
+                <option value="Akuntansi">📊 Akuntansi</option>
+                <option value="Personal Trainer">🏋️ Personal Trainer</option>
+                <option value="Public Speaker">🎙️ Public Speaker</option>
+                <option value="Gitar">🎸 Gitar</option>
+                <option value="Bahasa Indonesia">🇮🇩 Bahasa Indonesia</option>
+                <option value="Biologi">🧬 Biologi</option>
+                <option value="Lainnya">➕ Bidang Keahlian Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="customSubjectGroup" class="hidden">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Mata Pelajaran Khusus</label>
+            <input type="text" id="cmsCustomSubject" placeholder="Cth: Robotik, Catur, Coding..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Headline Profil Singkat *</label>
+            <input type="text" id="cmsHeadline" required placeholder="Dosen S2 ITB Berpengalaman 8 Tahun Bimbingan Olimpiade & UTBK" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none">
+          </div>
+
+          <!-- Tarif & Kontak -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tarif per Jam (Rupiah) *</label>
+              <input type="number" id="cmsHourlyRate" required min="30000" step="5000" value="150000" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-black focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp Guru *</label>
+              <input type="tel" id="cmsPhone" required placeholder="081234567890" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kota Domisili</label>
+              <select id="cmsCity" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none">
+                <option value="Jakarta Selatan">Jakarta Selatan</option>
+                <option value="Jakarta Pusat">Jakarta Pusat</option>
+                <option value="Jakarta Barat">Jakarta Barat</option>
+                <option value="Jakarta Timur">Jakarta Timur</option>
+                <option value="Depok">Depok</option>
+                <option value="Tangerang">Tangerang / BSD</option>
+                <option value="Bandung">Bandung</option>
+                <option value="Surabaya">Surabaya</option>
+                <option value="Online Seluruh Indonesia">Online Seluruh Indonesia</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tipe Kelas & Checkboxes -->
+          <div class="pt-2 flex flex-wrap gap-5 text-xs font-bold text-slate-800">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="cmsClassTypes" value="home" checked class="accent-spPink rounded">
+              <span>🏠 Siap ke Rumah Murid</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="cmsClassTypes" value="online" checked class="accent-spPink rounded">
+              <span>💻 Siap Les Online (Zoom)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="cmsClassTypes" value="studio" class="accent-spPink rounded">
+              <span>🏫 Di Tempat / Studio Guru</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="cmsFirstLessonFree" checked class="accent-spPink rounded">
+              <span>✨ Tawarkan 1 Jam Pertama Gratis</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="cmsIsNativeSpeaker" class="accent-spPink rounded">
+              <span>🌐 Penutur Asli (Native Speaker)</span>
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tentang Anda & Metode Mengajar *</label>
+            <textarea id="cmsBio" rows="4" required placeholder="Jelaskan pengalaman dan bagaimana cara Anda membimbing anak..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 4: TOMBOL SIMPAN / PERBARUI -->
+        <div class="space-y-3">
+          <button type="submit" class="w-full py-4 bg-spPink hover:bg-spPink-hover text-white font-black text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+            <span id="cmsSubmitBtnLabel">Simpan & Publikasikan Profil Guru</span>
+          </button>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" onclick="returnToGateway()" class="text-xs font-bold text-slate-500 hover:text-slate-800">
+              &larr; Kembali ke Menu Utama CMS
+            </button>
+            <button type="button" id="cmsDeleteBtn" onclick="deleteCurrentTeacher()" class="hidden py-2 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition-colors">
+              <i class="fa-solid fa-trash-can mr-1"></i> Hapus Profil Ini
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+  <script src="cms.js"></script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Sekolah - Portal Pendaftaran & Kelola Profil Sekolah / Bimbel MasaDepanAnak</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            spPink: {
+              DEFAULT: '#FF4365',
+              hover: '#FA2B52',
+              light: '#FFF0F3',
+            },
+            spNavy: '#0F172A',
+            spBlue: '#2563EB',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col font-sans bg-slate-100">
+
+  <!-- HEADER CMS SEKOLAH -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-school"></i>
+          </div>
+          <span class="text-xl font-black text-white">masadepan<span class="text-blue-400">anak</span></span>
+          <span class="ml-2 px-2 py-0.5 rounded-md bg-slate-800 text-blue-300 text-[10px] font-black uppercase border border-slate-700">CMS Sekolah</span>
+        </a>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-3">
+          <div id="schoolAuthHeader" class="hidden items-center gap-2">
+            <span id="schoolHeaderBadge" class="text-xs text-slate-300 font-bold bg-slate-800 px-3 py-1 rounded-lg border border-slate-700"></span>
+            <button onclick="logoutSchool()" class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 text-xs font-bold border border-rose-500/30 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+
+          <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors">
+            &larr; Website Utama
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CMS CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- VIEW 1: GATEWAY (PILIH DAFTAR ATAU LOGIN SEKOLAH) -->
+    <div id="schoolGatewayView" class="space-y-6">
+      
+      <!-- Welcome Hero Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white p-8 rounded-3xl border border-slate-800 shadow-md relative overflow-hidden">
+        <div class="max-w-2xl relative z-10 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-extrabold">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>Portal Lembaga Pendidikan & Sekolah</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-black leading-tight">
+            Publikasikan Sekolah, Preschool & Bimbel Anda
+          </h1>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Daftarkan institusi pendidikan Anda (SD, SMP, SMA, Preschool, Bimba, Daycare, Pesantren) ke direktori <b>MasaDepanAnak</b>. Kelola kurikulum, fasilitas, rincian SPP, dan unggah berkas brosur PPDB resmi yang terisolasi aman.
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Choice Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1: DAFTAR SEKOLAH BARU -->
+        <div class="bg-white rounded-3xl p-7 border-2 border-blue-600 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Tambah Sekolah / Lembaga Baru</h2>
+              <p class="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                Belum terdaftar di direktori? Isi data profil sekolah, fasilitas, biaya SPP, dan upload brosur PPDB untuk langsung tayang.
+              </p>
+            </div>
+
+            <ul class="space-y-2 text-xs font-bold text-slate-700 pt-2">
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Upload Foto Gedung / Lingkungan Sekolah</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Upload Dokumen Brosur PPDB (PDF)</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>Terima Konsultasi Masuk Siswa Baru via WhatsApp</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-6">
+            <button onclick="startSchoolRegistrationFlow()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-plus"></i>
+              <span>Mulai Pendaftaran Sekolah Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 2: LOGIN AKUN SEKOLAH -->
+        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center text-2xl font-black group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Masuk ke Profil Sekolah Saya</h2>
+              <p class="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                Sudah pernah mendaftar? Masukkan Nomor WhatsApp atau Email resmi sekolah Anda untuk mengelola profil.
+              </p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp atau Email Sekolah</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                    <i class="fa-solid fa-phone"></i>
+                  </span>
+                  <input type="text" id="schoolLoginInput" placeholder="Cth: 08988972433 atau info@sekolah.sch.id" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-blue-600">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6">
+            <button onclick="loginSchoolWithCredential()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Buka Profil Sekolah Saya</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: ISOLATED SCHOOL PROFILE EDITOR (ONLY SHOWS OWN DATA) -->
+    <div id="schoolEditorView" class="hidden space-y-6">
+
+      <!-- Active School Banner -->
+      <div class="bg-slate-900 text-white p-6 sm:p-7 rounded-3xl shadow-sm border border-slate-800 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <img id="cmsActiveSchoolBadge" src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80" class="w-16 h-16 rounded-2xl object-cover border-2 border-blue-500 shadow-xs">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                  <i class="fa-solid fa-circle-check mr-1"></i>Lembaga Terverifikasi
+                </span>
+                <span id="cmsSchoolIdBadge" class="text-[10px] text-slate-400 font-mono"></span>
+              </div>
+              <h1 class="text-xl sm:text-2xl font-black mt-1" id="cmsSchoolProfileName">
+                Profil Sekolah
+              </h1>
+              <p class="text-xs text-slate-300 mt-0.5" id="cmsSchoolProfileSubtext">
+                Anda hanya dapat melihat dan mengedit data lembaga Anda sendiri.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.open('index.html#sekolah-section', '_blank')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Lihat di Direktori</span>
+            </button>
+            <button type="button" onclick="logoutSchool()" class="px-3.5 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold text-xs rounded-xl border border-rose-500/30 transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM UPLOAD DATA SEKOLAH -->
+      <form id="schoolCmsForm" class="space-y-6">
+        
+        <!-- STEP 1: FOTO / LOGO SEKOLAH -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">1</span>
+              Foto Gedung / Fasilitas Sekolah
+            </h2>
+            <span class="text-xs font-bold text-blue-600">Foto Tampak Depan / Kegiatan</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-5">
+            <div class="relative shrink-0">
+              <img id="cmsSchoolImagePreview" src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80" class="w-28 h-24 rounded-2xl object-cover border-2 border-slate-200 shadow-xs">
+            </div>
+            <div class="flex-1 w-full space-y-2">
+              <div class="flex flex-wrap gap-2">
+                <input type="file" id="cmsSchoolFileInput" class="hidden" accept="image/*">
+                <button type="button" onclick="document.getElementById('cmsSchoolFileInput').click()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-camera"></i>
+                  <span>Upload Foto dari Komputer</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-500">
+                atau gunakan URL gambar eksternal:
+                <input type="text" id="cmsSchoolImageUrl" placeholder="https://images.unsplash.com/..." class="mt-1 w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: UPLOAD DOKUMEN BROSUR PPDB -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">2</span>
+              Upload Berkas Brosur PPDB / Kurikulum (PDF)
+            </h2>
+            <span class="text-xs font-bold text-emerald-700">PDF Calon Murid</span>
+          </div>
+
+          <div class="p-5 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 text-center space-y-3">
+            <i class="fa-solid fa-file-pdf text-3xl text-rose-500"></i>
+            <div>
+              <p class="text-xs font-extrabold text-slate-800">Unggah Berkas Brosur PPDB Anda</p>
+              <p class="text-[11px] text-slate-500">Orang tua dapat mengunduh brosur ini langsung di website.</p>
+            </div>
+            
+            <input type="file" id="cmsSchoolBrochureInput" class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+            
+            <div class="pt-1 flex flex-wrap items-center justify-center gap-3">
+              <button type="button" onclick="document.getElementById('cmsSchoolBrochureInput').click()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors">
+                <i class="fa-solid fa-arrow-up-from-bracket mr-1"></i>
+                Pilih Dokumen Brosur PDF
+              </button>
+              <div id="cmsSchoolBrochureDisplay" class="text-xs font-bold text-slate-600">Belum ada file dipilih</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: INFORMASI SEKOLAH, JENJANG, SPP & KURIKULUM -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">3</span>
+              Informasi Umum, Biaya SPP & Akreditasi
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lembaga / Sekolah *</label>
+              <input type="text" id="cmsSchoolName" required placeholder="Cth: SD Islam Terpadu Al-Fatih" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-blue-600">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Jenjang / Tipe Sekolah *</label>
+              <select id="cmsSchoolType" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none">
+                <option value="Preschool & Daycare">🧸 Preschool & Daycare</option>
+                <option value="Bimba & Bimbel">📚 BiMBA & Bimbingan Belajar</option>
+                <option value="Sekolah Dasar (SD)">🎒 Sekolah Dasar (SD)</option>
+                <option value="Sekolah Menengah Pertama (SMP)">🏫 Sekolah Menengah Pertama (SMP)</option>
+                <option value="Sekolah Menengah Atas (SMA)">🎓 Sekolah Menengah Atas (SMA/SMK)</option>
+                <option value="Pesantren & Boarding School">🕌 Pesantren & Boarding School</option>
+                <option value="Sekolah Inklusi & Berkebutuhan Khusus">🌟 Sekolah Inklusi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Akreditasi *</label>
+              <select id="cmsSchoolAkreditasi" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none">
+                <option value="A (Unggul)">A (Unggul Nasional)</option>
+                <option value="A (Internasional Cambridge/IB)">A (Internasional Cambridge / IB)</option>
+                <option value="B (Baik)">B (Baik)</option>
+                <option value="Terdaftar Resmi Kemendikbud">Terdaftar Resmi Kemendikbud</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kurikulum Utama *</label>
+              <input type="text" id="cmsSchoolCurriculum" required placeholder="Cth: Kurikulum Merdeka + Tahfidz" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kota Domisili *</label>
+              <select id="cmsSchoolCity" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none">
+                <option value="Jakarta Selatan">Jakarta Selatan</option>
+                <option value="Jakarta Pusat">Jakarta Pusat</option>
+                <option value="Jakarta Barat">Jakarta Barat</option>
+                <option value="Jakarta Timur">Jakarta Timur</option>
+                <option value="Depok">Depok</option>
+                <option value="Tangerang">Tangerang / BSD</option>
+                <option value="Bandung">Bandung</option>
+                <option value="Surabaya">Surabaya</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Biaya SPP & Biaya Masuk -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Estimasi SPP Bulanan (Rp) *</label>
+              <input type="number" id="cmsSchoolTuition" required min="50000" step="50000" value="750000" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-black focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Uang Masuk / Pangkal (Rp)</label>
+              <input type="number" id="cmsSchoolEntryFee" min="0" step="100000" value="5000000" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-black focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp CS PPDB *</label>
+              <input type="tel" id="cmsSchoolPhone" required placeholder="08988972433" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Lengkap Sekolah</label>
+            <input type="text" id="cmsSchoolAddress" placeholder="Jl. Raya No. 123, Kelurahan, Kecamatan..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none">
+          </div>
+
+          <!-- Fasilitas & Program -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Fasilitas Sekolah (1 baris per fasilitas)</label>
+              <textarea id="cmsSchoolFacilities" rows="3" placeholder="Ruang Kelas Ber-AC&#10;Lab Komputer & Coding&#10;Perpustakaan Digital&#10;Lapangan Olahraga" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Program Unggulan (1 baris per program)</label>
+              <textarea id="cmsSchoolPrograms" rows="3" placeholder="Bilingual Class (English-Indonesian)&#10;Tahfidz Quran 3 Juz&#10;Robotika & Coding Anak" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Profil Sekolah & Visi Misi *</label>
+            <textarea id="cmsSchoolDescription" rows="4" required placeholder="Jelaskan keunggulan lingkungan belajar dan prestasi sekolah Anda..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 4: TOMBOL PUBLIKASI -->
+        <div class="space-y-3">
+          <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+            <span id="cmsSchoolSubmitBtnLabel">Simpan & Publikasikan Sekolah ke Website</span>
+          </button>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" onclick="returnToSchoolGateway()" class="text-xs font-bold text-slate-500 hover:text-slate-800">
+              &larr; Kembali ke Menu Utama CMS Sekolah
+            </button>
+            <button type="button" id="cmsSchoolDeleteBtn" onclick="deleteCurrentSchool()" class="hidden py-2 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition-colors">
+              <i class="fa-solid fa-trash-can mr-1"></i> Hapus Lembaga Ini
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+  <script src="cms-sekolah.js"></script>
+</body>
+</html>

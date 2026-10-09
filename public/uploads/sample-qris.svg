@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <!-- Background Card -->
+  <rect width="400" height="500" rx="20" fill="#ffffff"/>
+  
+  <!-- QRIS Header Banner -->
+  <rect x="0" y="0" width="400" height="85" rx="20" fill="#dc2626"/>
+  <rect x="0" y="65" width="400" height="20" fill="#dc2626"/>
+  
+  <!-- QRIS Brand text -->
+  <text x="200" y="52" fill="#ffffff" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="34" font-weight="900" letter-spacing="4" text-anchor="middle">QRIS</text>
+  <text x="200" y="72" fill="#fecaca" font-family="system-ui, sans-serif" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle">QR KODE STANDAR PEMBAYARAN NASIONAL</text>
+
+  <!-- Store Name Display -->
+  <text x="200" y="115" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="800" text-anchor="middle">NAKAHASITE SERVICE HUB</text>
+  <text x="200" y="132" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">NMID: ID102026889912001 • A01</text>
+
+  <!-- QR Code Matrix Simulation -->
+  <g transform="translate(60, 150)">
+    <!-- Outer Border -->
+    <rect x="-10" y="-10" width="300" height="300" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" rx="12"/>
+    
+    <!-- Position Detection Patterns (Corners) -->
+    <!-- Top-Left Corner -->
+    <rect x="15" y="15" width="60" height="60" fill="#0f172a" rx="8"/>
+    <rect x="25" y="25" width="40" height="40" fill="#ffffff" rx="4"/>
+    <rect x="35" y="35" width="20" height="20" fill="#0f172a" rx="2"/>
+
+    <!-- Top-Right Corner -->
+    <rect x="205" y="15" width="60" height="60" fill="#0f172a" rx="8"/>
+    <rect x="215" y="25" width="40" height="40" fill="#ffffff" rx="4"/>
+    <rect x="225" y="35" width="20" height="20" fill="#0f172a" rx="2"/>
+
+    <!-- Bottom-Left Corner -->
+    <rect x="15" y="205" width="60" height="60" fill="#0f172a" rx="8"/>
+    <rect x="25" y="215" width="40" height="40" fill="#ffffff" rx="4"/>
+    <rect x="35" y="225" width="20" height="20" fill="#0f172a" rx="2"/>
+
+    <!-- Data matrix pixels -->
+    <!-- Center Logo Badge -->
+    <rect x="110" y="110" width="60" height="60" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+    <text x="140" y="146" fill="#dc2626" font-family="system-ui, sans-serif" font-size="14" font-weight="900" text-anchor="middle">QRIS</text>
+
+    <!-- Simulated Data Modules -->
+    <rect x="90" y="25" width="20" height="20" fill="#0f172a"/>
+    <rect x="130" y="25" width="30" height="15" fill="#0f172a"/>
+    <rect x="175" y="30" width="15" height="30" fill="#0f172a"/>
+    
+    <rect x="95" y="60" width="40" height="15" fill="#0f172a"/>
+    <rect x="150" y="60" width="30" height="30" fill="#0f172a"/>
+
+    <rect x="25" y="90" width="15" height="30" fill="#0f172a"/>
+    <rect x="55" y="90" width="30" height="20" fill="#0f172a"/>
+    <rect x="200" y="95" width="45" height="20" fill="#0f172a"/>
+
+    <rect x="25" y="140" width="20" height="40" fill="#0f172a"/>
+    <rect x="60" y="130" width="30" height="20" fill="#0f172a"/>
+    <rect x="65" y="165" width="25" height="25" fill="#0f172a"/>
+
+    <rect x="195" y="135" width="30" height="25" fill="#0f172a"/>
+    <rect x="240" y="145" width="25" height="35" fill="#0f172a"/>
+
+    <rect x="90" y="190" width="35" height="20" fill="#0f172a"/>
+    <rect x="145" y="195" width="25" height="35" fill="#0f172a"/>
+    <rect x="190" y="180" width="40" height="20" fill="#0f172a"/>
+
+    <rect x="95" y="225" width="30" height="35" fill="#0f172a"/>
+    <rect x="140" y="245" width="45" height="15" fill="#0f172a"/>
+    <rect x="200" y="220" width="25" height="40" fill="#0f172a"/>
+    <rect x="240" y="235" width="20" height="25" fill="#0f172a"/>
+  </g>
+
+  <!-- Supported Payments Footer Logos -->
+  <text x="200" y="465" fill="#475569" font-family="system-ui, sans-serif" font-size="10" font-weight="700" text-anchor="middle">MENDUKUNG SEMUA BANK &amp; E-WALLET</text>
+  <text x="200" y="482" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="9" text-anchor="middle">BCA • Mandiri • BRI • BNI • GoPay • OVO • Dana • ShopeePay</text>
+</svg>

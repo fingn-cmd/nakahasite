@@ -1,0 +1,110 @@
+/* MasaDepanAnak - Exact Superprof-Style Design System */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --sp-pink: #ff4365;
+  --sp-pink-hover: #fa2b52;
+  --sp-pink-light: #fff0f3;
+  --sp-navy: #0f172a;
+  --sp-slate: #334155;
+  --sp-gray-bg: #f8fafc;
+  --sp-border: #e2e8f0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1e293b;
+  background-color: #ffffff;
+}
+
+/* Superprof Button Styling */
+.btn-superprof {
+  background-color: var(--sp-pink);
+  color: #ffffff;
+  border-radius: 12px;
+  font-weight: 800;
+  transition: all 0.15s ease-in-out;
+}
+.btn-superprof:hover {
+  background-color: var(--sp-pink-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 67, 101, 0.35);
+}
+.btn-superprof:active {
+  transform: translateY(0);
+}
+
+/* Superprof Card Styling */
+.superprof-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.superprof-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Filter Pill */
+.sp-filter-pill {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.sp-filter-pill:hover {
+  border-color: #0f172a;
+  color: #0f172a;
+}
+.sp-filter-pill.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+/* Category Pill */
+.category-tab {
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 16px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.category-tab:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.category-tab.active {
+  background: var(--sp-pink);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(255, 67, 101, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Range input accent */
+input[type="range"] {
+  accent-color: #ff4365;
+}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Dynamic SEO Meta Tags -->
+  <title id="seoTitle">Blog, Berita & Press Release Resmi | MasaDepanAnak</title>
+  <meta name="description" id="seoDescription" content="Portal berita, press release resmi, panduan memilih preschool, SD, SMP, SMA, dan tips bimbingan les privat terbaik di Indonesia.">
+  <meta name="keywords" id="seoKeywords" content="press release masadepananak, berita pendidikan, direktori sekolah sd smp sma, guru privat terbaik">
+  <meta name="robots" id="seoRobots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" id="seoCanonical" href="http://localhost:3000/blog.html">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" id="ogTitle" content="Blog & Press Release | MasaDepanAnak">
+  <meta property="og:description" id="ogDesc" content="Portal edukasi dan direktori sekolah resmi MasaDepanAnak.">
+  <meta property="og:image" id="ogImage" content="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1000&q=80">
+  <meta property="og:url" id="ogUrl" content="http://localhost:3000/blog.html">
+
+  <!-- Schema.org JSON-LD for Google Index & Rich Snippets -->
+  <script type="application/ld+json" id="schemaJsonLd">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "Blog & Press Release MasaDepanAnak",
+    "image": ["https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1000&q=80"],
+    "datePublished": "2026-10-02T10:00:00.000Z",
+    "dateModified": "2026-10-02T10:00:00.000Z",
+    "author": {
+      "@type": "Organization",
+      "name": "MasaDepanAnak Editorial Team"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "MasaDepanAnak",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "http://localhost:3000/logo.png"
+      }
+    },
+    "description": "Portal berita resmi dan bimbingan edukasi anak."
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            spPink: {
+              DEFAULT: '#FF4365',
+              hover: '#FA2B52',
+              light: '#FFF0F3',
+            },
+            spNavy: '#0F172A',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col font-sans bg-slate-50">
+
+  <!-- TOP TRUST BANNER -->
+  <div class="bg-spNavy text-white text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[10px] uppercase">Official Press</span>
+        <span>Pusat Berita, Rilis Resmi & Edukasi MasaDepanAnak</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-300 font-bold">
+        <a href="https://wa.me/628988972433?text=Halo%20Admin%20MasaDepanAnak,%20saya%20ingin%20tanya%20seputar%20artikel/press%20release." target="_blank" class="hover:text-emerald-400 flex items-center gap-1.5 transition-colors">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
+          <span>Hotline Redaksi: 08988972433</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        
+        <!-- Brand Logo -->
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-2xl bg-spPink text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <span class="text-2xl font-black tracking-tight text-slate-900 font-sans">
+              masadepan<span class="text-spPink">anak</span>
+            </span>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider -mt-1">Berita & Press Release</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-4">
+          <a href="index.html#marketplace-section" class="text-xs font-bold text-slate-700 hover:text-spPink transition-colors px-3 py-2">
+            Cari Guru Privat
+          </a>
+          <a href="index.html#sekolah-section" class="text-xs font-bold text-slate-700 hover:text-spPink transition-colors px-3 py-2">
+            Direktori Sekolah & Bimbel
+          </a>
+          <a href="blog.html" class="text-xs font-black text-spPink border-b-2 border-spPink px-3 py-2">
+            Blog & Press Release
+          </a>
+          
+          <div class="h-6 w-px bg-slate-200"></div>
+
+          <!-- CMS Links -->
+          <a href="cms-blog.html" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold text-xs border border-emerald-200 transition-colors">
+            <i class="fa-solid fa-pen-nib text-emerald-600"></i>
+            <span>Tulis Artikel (CMS)</span>
+          </a>
+
+          <a href="https://wa.me/628988972433" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-xs transition-all">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span>WhatsApp (08988972433)</span>
+          </a>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="flex items-center gap-2 md:hidden">
+          <a href="index.html" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black">
+            &larr; Beranda
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- VIEW A: BLOG LISTING -->
+    <div id="blogListingView" class="space-y-8">
+      
+      <!-- Header Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white p-8 sm:p-10 rounded-3xl border border-slate-800 shadow-md relative overflow-hidden">
+        <div class="max-w-2xl relative z-10 space-y-3">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black">
+            <i class="fa-solid fa-newspaper"></i>
+            <span>Pusat Publikasi Resmi & Wawasan Edukasi</span>
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-black">
+            Kabar Terkini, Press Release & Panduan Pendidikan Anak
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Dapatkan informasi terpercaya seputar siaran pers resmi, kurikulum sekolah (Merdeka/Cambridge/IB), tips memilih preschool, hingga strategi bimbingan privat anak.
+          </p>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap items-center gap-2 pb-2">
+        <button onclick="filterBlogCategory('Semua')" class="blog-cat-btn active px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white shadow-xs transition-all">
+          Semua Kategori
+        </button>
+        <button onclick="filterBlogCategory('Press Release')" class="blog-cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all">
+          📰 Press Release
+        </button>
+        <button onclick="filterBlogCategory('Panduan Sekolah')" class="blog-cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all">
+          🏫 Panduan Sekolah
+        </button>
+        <button onclick="filterBlogCategory('Tips Belajar')" class="blog-cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all">
+          💡 Tips Belajar & Privat
+        </button>
+        <button onclick="filterBlogCategory('Info Parenting')" class="blog-cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all">
+          👨‍👩‍👧 Info Parenting
+        </button>
+      </div>
+
+      <!-- Blog Grid -->
+      <div id="blogCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by blog.js -->
+      </div>
+
+    </div>
+
+    <!-- VIEW B: SINGLE ARTICLE DETAIL VIEW -->
+    <div id="blogDetailView" class="hidden max-w-4xl mx-auto space-y-8">
+      
+      <!-- Back button & Breadcrumb -->
+      <div class="flex items-center justify-between">
+        <button onclick="returnToBlogList()" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200 shadow-2xs transition-colors">
+          &larr; Kembali ke Semua Artikel
+        </button>
+        <span id="articleCategoryBadge" class="text-xs font-black uppercase text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200"></span>
+      </div>
+
+      <article class="bg-white rounded-3xl border border-slate-200 shadow-xs p-6 sm:p-10 space-y-6">
+        
+        <!-- Article Header -->
+        <header class="space-y-4 pb-6 border-b border-slate-100">
+          <h1 id="articleTitle" class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight"></h1>
+          
+          <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 gap-3 pt-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
+                <i class="fa-solid fa-user-pen"></i>
+              </div>
+              <div>
+                <p id="articleAuthor" class="font-extrabold text-slate-900"></p>
+                <p id="articleAuthorRole" class="text-[11px] text-slate-400"></p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 text-slate-500 font-semibold">
+              <span id="articleDate"><i class="fa-regular fa-calendar mr-1"></i></span>
+              <span>•</span>
+              <span id="articleReadTime"><i class="fa-regular fa-clock mr-1"></i></span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Cover Image -->
+        <div class="rounded-2xl overflow-hidden max-h-[450px] shadow-2xs border border-slate-200">
+          <img id="articleCoverImage" src="" alt="" class="w-full h-full object-cover">
+        </div>
+
+        <!-- Lead Excerpt -->
+        <div id="articleExcerptLead" class="p-4 rounded-2xl bg-slate-50 border-l-4 border-spPink text-xs sm:text-sm font-semibold text-slate-700 italic leading-relaxed"></div>
+
+        <!-- Google Sitelinks Rich Box (If Sitelinks exist) -->
+        <div id="articleSitelinksBox" class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
+          <div class="flex items-center gap-2 text-emerald-900 font-black text-xs uppercase tracking-wider">
+            <i class="fa-brands fa-google text-emerald-600"></i>
+            <span>Tautan Terkait di MasaDepanAnak (Google Sitelinks)</span>
+          </div>
+          <div id="articleSitelinksList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+
+        <!-- Body Content -->
+        <div id="articleBodyContent" class="prose max-w-none text-slate-700 text-sm leading-relaxed space-y-4 pt-2"></div>
+
+        <!-- Author / Editorial Signature -->
+        <div class="pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-6 rounded-2xl">
+          <div class="space-y-1 text-center sm:text-left">
+            <h4 class="text-xs font-black text-slate-900">Butuh Informasi Lebih Lanjut?</h4>
+            <p class="text-xs text-slate-500">Hubungi Hotline Humas & Customer Service MasaDepanAnak.</p>
+          </div>
+          <a href="https://wa.me/628988972433?text=Halo%20Admin%20MasaDepanAnak,%20saya%20membaca%20artikel%20di%20website%20dan%20ingin%20konsultasi." target="_blank" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-base"></i>
+            <span>WhatsApp CS: 08988972433</span>
+          </a>
+        </div>
+
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-spNavy text-slate-300 pt-10 pb-8 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+      <p class="text-xs text-slate-400">&copy; 2026 MasaDepanAnak. Portal Guru Privat, Direktori Sekolah & Press Release Indonesia.</p>
+      <p class="text-xs text-emerald-400 font-bold">WhatsApp Resmi: 08988972433</p>
+    </div>
+  </footer>
+
+  <script src="blog.js"></script>
+</body>
+</html>

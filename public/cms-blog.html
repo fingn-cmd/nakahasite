@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Blog & Press Release - Publikasi Artikel & SEO Google MasaDepanAnak</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            spPink: '#FF4365',
+            spNavy: '#0F172A',
+            spGreen: '#059669',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col font-sans bg-slate-100">
+
+  <!-- HEADER CMS BLOG -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-newspaper"></i>
+          </div>
+          <span class="text-xl font-black text-white">masadepan<span class="text-emerald-400">anak</span></span>
+          <span class="ml-2 px-2 py-0.5 rounded-md bg-slate-800 text-emerald-300 text-[10px] font-black uppercase border border-slate-700">CMS Blog & SEO</span>
+        </a>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-3">
+          <a href="blog.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-globe"></i>
+            <span>Buka Halaman Blog</span>
+          </a>
+
+          <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors">
+            &larr; Website Utama
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CMS CONTAINER -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Top Banner -->
+    <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-7 rounded-3xl border border-slate-800 shadow-md mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold mb-2">
+          <i class="fa-brands fa-google"></i>
+          <span>Google Index & Sitelinks SEO Engine</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black">
+          Publikasi Artikel, Press Release & Optimasi SEO
+        </h1>
+        <p class="text-xs text-slate-300 mt-1 max-w-2xl">
+          Tulis dan kelola artikel berita, press release, panduan sekolah, serta konfigurasi Meta Description, Sitelinks Rich Snippets, dan XML Sitemap agar artikel langsung terbaca dan terindeks di mesin pencari Google.
+        </p>
+      </div>
+
+      <button onclick="createNewArticle()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 shrink-0">
+        <i class="fa-solid fa-plus-circle"></i>
+        <span>Tulis Artikel Baru</span>
+      </button>
+    </div>
+
+    <!-- TABS / LIST OF PUBLISHED ARTICLES -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- LEFT: ARTICLE LIST (4 cols) -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-xs font-black uppercase text-slate-900">Daftar Artikel & Rilis</h2>
+            <span id="blogTotalBadge" class="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">3 Artikel</span>
+          </div>
+
+          <div id="blogListContainer" class="space-y-2 mt-3 max-h-[600px] overflow-y-auto pr-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- SEO Quick Link Info -->
+        <div class="bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+          <div class="flex items-center gap-2 text-emerald-400 font-black">
+            <i class="fa-solid fa-sitemap"></i>
+            <span>Google Sitemap XML Aktif</span>
+          </div>
+          <p class="text-[11px] text-slate-400">
+            Sitemap otomatis terhubung di endpoint:
+          </p>
+          <a href="/sitemap.xml" target="_blank" class="block bg-slate-800 p-2 rounded-lg text-[10px] font-mono text-emerald-300 hover:underline break-all">
+            http://localhost:3000/sitemap.xml
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: ARTICLE EDITOR FORM (8 cols) -->
+      <div class="lg:col-span-8">
+        <form id="blogCmsForm" class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+          
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+              <h2 class="text-base font-black text-slate-900" id="editorFormHeading">Tulis Artikel / Press Release Baru</h2>
+              <p class="text-xs text-slate-500" id="editorFormSubheading">Isi konten dan metadata SEO lengkap di bawah ini.</p>
+            </div>
+            <button type="button" onclick="createNewArticle()" class="text-xs font-bold text-slate-500 hover:text-slate-900">
+              + Bersihkan Form
+            </button>
+          </div>
+
+          <!-- SECTION 1: KONTEN UTAMA -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Judul Artikel / Press Release *</label>
+              <input type="text" id="blogTitle" required placeholder="Cth: PRESS RELEASE: MasaDepanAnak Luncurkan Platform Integrasi Guru Privat" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-emerald-600">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Artikel *</label>
+                <select id="blogCategory" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none">
+                  <option value="Press Release">📰 Press Release Resmi</option>
+                  <option value="Panduan Sekolah">🏫 Panduan Memilih Sekolah</option>
+                  <option value="Tips Belajar">💡 Tips Belajar & Bimbingan Privat</option>
+                  <option value="Info Parenting">👨‍👩‍👧 Info Parenting & Edukasi</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">URL Slug (SEO Friendly Link) *</label>
+                <input type="text" id="blogSlug" required placeholder="press-release-peluncuran-masadepananak" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-emerald-600">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Nama Penulis / Rilis</label>
+                <input type="text" id="blogAuthor" value="Tim Humas MasaDepanAnak" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Peran / Jabatan Penulis</label>
+                <input type="text" id="blogAuthorRole" value="Official Editorial Team" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Cover Image (URL Gambar / Banner)</label>
+              <div class="flex gap-2">
+                <input type="text" id="blogCoverImage" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1000&q=80" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none">
+                <input type="file" id="blogImageFileInput" class="hidden" accept="image/*">
+                <button type="button" onclick="document.getElementById('blogImageFileInput').click()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl">
+                  <i class="fa-solid fa-camera mr-1"></i> Upload
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Ringkasan / Excerpt Artikel *</label>
+              <textarea id="blogExcerpt" rows="2" required placeholder="Ringkasan singkat artikel untuk preview dan lead paragraph..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Isi Konten Lengkap (Format HTML / Paragraf) *</label>
+              <textarea id="blogContent" rows="8" required placeholder="<h2>Sub Judul</h2><p>Isi paragraf berita lengkap...</p>" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- SECTION 2: SEO GOOGLE INDEX & SITELINKS OPTIMIZATION -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-black uppercase text-emerald-800 flex items-center gap-1.5">
+                <i class="fa-brands fa-google text-emerald-600 text-sm"></i>
+                <span>Konfigurasi SEO & Google Index Snippet</span>
+              </h3>
+              <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                <input type="checkbox" id="blogIsGoogleIndexed" checked class="accent-emerald-600 rounded">
+                <span>Izinkan Google Index (Robots: index, follow)</span>
+              </label>
+            </div>
+
+            <!-- Google Snippet Live Preview -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Google Search Preview:</span>
+              <div class="text-xs text-blue-800 font-semibold truncate hover:underline cursor-pointer" id="googlePreviewTitle">
+                Judul Artikel | MasaDepanAnak
+              </div>
+              <div class="text-[11px] text-emerald-700 truncate" id="googlePreviewUrl">
+                https://masadepananak.id › blog › slug-artikel
+              </div>
+              <div class="text-xs text-slate-600 line-clamp-2 leading-relaxed" id="googlePreviewDesc">
+                Meta deskripsi artikel akan tampil di sini untuk menarik klik pengguna Google Search...
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-xs font-bold text-slate-700">Meta Title (SEO Title)</label>
+                  <span id="metaTitleCount" class="text-[10px] text-slate-400">0/60 karakter</span>
+                </div>
+                <input type="text" id="blogMetaTitle" maxlength="70" placeholder="Judul untuk Google Search..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-emerald-600">
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-xs font-bold text-slate-700">Meta Description</label>
+                  <span id="metaDescCount" class="text-[10px] text-slate-400">0/160 karakter</span>
+                </div>
+                <input type="text" id="blogMetaDescription" maxlength="180" placeholder="Deskripsi ringkas 150-160 karakter..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-emerald-600">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Focus Keywords & Tags (Pisahkan dengan koma)</label>
+              <input type="text" id="blogKeywords" placeholder="press release, guru privat, direktori sekolah, bimba aiueo, pendidikan anak" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none">
+            </div>
+
+            <!-- SITELINKS MANAGER -->
+            <div class="space-y-2 pt-2 border-t border-slate-200">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="text-xs font-black text-slate-900 block">Google Sitelinks Rich Data</label>
+                  <p class="text-[10px] text-slate-500">Tautan navigasi cepat yang tersemat di bawah hasil pencarian Google.</p>
+                </div>
+                <button type="button" onclick="addSitelinkRow()" class="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-bold rounded-lg transition-colors">
+                  + Tambah Sitelink
+                </button>
+              </div>
+
+              <div id="sitelinksContainer" class="space-y-2">
+                <!-- Dynamic Sitelinks rows -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="pt-2 flex items-center justify-between gap-4">
+            <button type="submit" class="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span id="blogSubmitBtnLabel">Terbitkan Artikel & Simpan Metadata SEO</span>
+            </button>
+
+            <button type="button" id="blogDeleteBtn" onclick="deleteCurrentArticle()" class="hidden py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition-colors">
+              <i class="fa-solid fa-trash-can mr-1"></i> Hapus
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="cms-blog.js"></script>
+</body>
+</html>
